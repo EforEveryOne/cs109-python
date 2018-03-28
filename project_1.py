@@ -1,5 +1,17 @@
 # start/age/char_class must be definied to avoid errors
 # adding comment for commit 
+
+#can have an intro for the program that prompts the user to
+# start the game? list of functions that can be called and descriptions
+# help() can be a function that lists all the others. Some can be instructions for w/e
+# Can get really specific if I want. Basically functions that can be called that will print strings
+# But where does this exist? The whole game exists in the start_game() func,
+# but that will exist in this wrapper/shell of stuff.
+# So in the start_game() I'll create another shell that is the town that
+# gives the user the chance to call functions
+# But can they call funcs outside of it? Maybe flavorful that they can call help and stuff when in 
+# The main town...
+
 start = ""
 age = ""
 char_class = ""
