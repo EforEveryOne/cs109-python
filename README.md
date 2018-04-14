@@ -1,4 +1,4 @@
-This is a text based adventure game being designed by Elijah Friedrich for Intro to a class at Hampshire College: CS109-Intro to Programming Open Source.
+This is a text based adventure game being designed by Elijah Friedrich for a class at Hampshire College: CS109-Intro to Programming Open Source.
 
 Language: Python v3+
 
