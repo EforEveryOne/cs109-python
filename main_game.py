@@ -98,11 +98,11 @@ def input_class(age, name, endurance, strength):
 		char_class = input("Do you consider yourself more of a Tank or an Aggressive person? ").lower()
 		if "tank" in (char_class):
 			endurance += 5
-			print(endurance, strength)
 			# time.sleep(2)
-			print ("Congratulations. Your character is complete.")
-			# time.sleep(1)
-			print("Your name is: " + str(name).capitalize() + "\nYour age is: " + str(age) + "\nYour class is: " + str(char_class).capitalize())
+			print ("Congratulations. Your character is complete. \nYou are ready for adventure! \n\n")
+			# time.sleep(2)
+
+			# print("Your name is: " + str(name).capitalize() + "\nYour age is: " + str(age) + "\nYour class is: " + str(char_class).capitalize())
 			calc_stats(age, name, endurance, strength, char_class)
 			# character_sheet()
 			# inventory()
@@ -110,9 +110,9 @@ def input_class(age, name, endurance, strength):
 		elif "aggressive" in (char_class):
 			strength += 5
 			# time.sleep(2)
-			print ("Congratulations. Your character is complete.")
-			# time.sleep(1)
-			print("Your name is: " + str(name).capitalize() + "\nYour age is: " + str(age) + "\nYour class is: " + str(char_class).capitalize())
+			print ("Congratulations. Your character is complete. \nYou are ready for adventure! \n\n")
+			# time.sleep(2)
+			# print("Your name is: " + str(name).capitalize() + "\nYour age is: " + str(age) + "\nYour class is: " + str(char_class).capitalize())
 			calc_stats(age, name, endurance, strength, char_class)
 			# character_sheet()
 			# inventory()
@@ -120,6 +120,18 @@ def input_class(age, name, endurance, strength):
 		else:
 			print("Be clear with me. Tank or an Aggressive? ")
 			time.sleep(1)
+
+# TODO
+# create a for loep so you can call exaclty how many times you want it to run.
+
+def clear(amount):
+	i = 0
+	for i in range(amount):
+		time.sleep(0.2)
+		print("\n")
+		i+=1
+	
+
 
 # Compiles all the player info gathered in the previus functions
 # creates the player_character class object and passes in all the vars at their custom inputs.
@@ -132,16 +144,22 @@ def calc_stats(age, name, endurance, strength, char_class):
 	hitpoints = endurance * 2 + level
 	damage = strength / 2 + level
 	damage = int(damage)
+	armor = 0
 	gold = age / 3
 	gold = int(gold)
 	current_experience = 0
 	next_level_exp = 100 + current_experience * 2
+	inventory = []
+	is_weapon_slot_filled = 0
+	is_armor_slot_filled = 0
+	current_weapon = "None"
+	current_armor = "None"
 	# print(hitpoints, damage, level, strength, endurance, attribute_points, gold)
 
-
 	class player_character:
-		def __init__(self, name, age, char_class, endurance, strength, hitpoints, damage, level, 
-			         attribute_points, current_experience, next_level_exp, gold):
+		def __init__(self, name, age, char_class, endurance, strength, hitpoints, damage, armor, level, 
+			         attribute_points, current_experience, next_level_exp, gold, inventory,
+			         is_weapon_slot_filled, is_armor_slot_filled, current_weapon, current_armor):
 			self.name = name
 			self.age = age
 			self.char_class = char_class
@@ -149,45 +167,170 @@ def calc_stats(age, name, endurance, strength, char_class):
 			self.strength = strength
 			self.hitpoints = hitpoints
 			self.damage = damage
+			self.armor = armor
 			self.level = level
 			self.attribute_points = attribute_points
 			self.current_experience = current_experience
 			self.next_level_exp = next_level_exp
 			self.gold = gold
+			self.inventory = []
+			self.is_weapon_slot_filled = is_weapon_slot_filled
+			self.is_armor_slot_filled = is_armor_slot_filled
+			self.current_weapon = current_weapon
+			self.current_armor = current_armor
 
 		def details(self):
-			print("Player details: " + str(self.name) + str(self.age) + str(self.char_class) +
-				  ". Endurance: " + str(self.endurance) + ". Strength: " + str(self.strength) +
-				  ". Hitpoints: " + str(self.hitpoints) + ". Damage: " + str(self.damage) +
-				  ". Level: " + str(self.level) + ". Attribute_Points: " + str(self.attribute_points) + 
-				  ". Current_Experience: " + str(self.current_experience) + ". Next_Level_Exp: " + 
-				  str(self.next_level_exp) + ". Gold: " + str(self.gold))
+			print("CHARACTER SHEET: \nName: " + str(self.name) + ". \nAge: " + str(self.age) +
+				  ". \nClass: " + str(self.char_class).upper() + ". \nEndurance: " + str(self.endurance) +
+				  ". \nStrength: " + str(self.strength) + ". \nHitpoints: " + str(self.hitpoints) +
+				  ". \nDamage: " + str(self.damage) + ". \nArmor: " + str(self.armor) + ". \nLevel: " + str(self.level) +
+				  ". \nAttribute Points: " + str(self.attribute_points) + ". \nCurrent Experience: " +
+				  str(self.current_experience) + ". \nExp to next Level: " + 
+				  str(self.next_level_exp) + ". \nGold: " + str(self.gold) + ". \nCurrent Weapon: " + str(self.current_weapon) + 
+				  ". \nCurrnet Armor: " + str(self.current_armor) + ". ")
 	# How else to allow the class object global scope?
 	global player
-	player = player_character(name, age, char_class, endurance, strength, hitpoints, damage, level,
-		                      attribute_points, current_experience, next_level_exp, gold)
-	# return player(name, age, char_class, endurance, strength, hitpoints, damage, level, attribute_points, current_experience, next_level_exp, gold)
+	player = player_character(name, age, char_class, endurance, strength, hitpoints, damage, armor, level,
+		                      attribute_points, current_experience, next_level_exp, gold, inventory,
+		                      is_weapon_slot_filled, is_armor_slot_filled, current_weapon, current_armor)
 	player.details()
+	# time.sleep(6)
+	# clear(1)
+	print("\nI wish you well on your adventure, " + (player.name) + "!") 
+	# clear(1)
+	# time.sleep(2)
+	print(" \n\nYour eyes are getting heavy...")
+	# clear(1)
+	# time.sleep(2)
+	print("Your vision is blurry...")
+	# clear(1)
+	# time.sleep(2)
+	print("The wolrd fades away...")
+	# time.sleep(4)
+	print("\n" * 100)
+	# time.sleep(3)
+	print("You wake up on a dusty road.")
+	# town()
 	# return player
 
 
+# Can do it by passing in arguments instead but need to keep track of them between transitions
+# (requires having other areas built)
+first_visit = 1
+def town():
+	# global first_visit
+	# global first_meeting
+	if first_visit == 1:
+	# if first_meeting == True:
+		print("Welcome to town, traveller! ")
+		first_visit = 0
+		
+
+	# while True:
+
+
+
+class armor():
+	"""docstring fos armor"""
+	def __init__(self, name, level_requirment, armor_bonus):
+		self.name = name
+		self.armor_bonus = armor_bonus
+		self.level_requirment = level_requirment
+
+	def equip_item(self, player):
+		if player.level < self.level_requirment:
+			print("Your level is too low. \nYour level: " + str(player.level) +
+				  ". \n" + "Item level: " + str(self.level_requirment) + ". ")
+		elif player.is_armor_slot_filled == 1:
+			print("You already have armor. " + "Currnet Armor: " + str(player.current_armor))
+		elif (self.name) in player.inventory:
+			player.inventory.remove (self.name)
+			player.armor += self.armor_bonus
+			player.is_armor_slot_filled = 1
+			player.current_armor = str(self.name)
+		else:
+			player.armor += self.armor_bonus
+			player.is_armor_slot_filled = 1
+			player.current_armor = str(self.name)
+			
+	def unequip_item(self, player):
+		if player.is_armor_slot_filled == 0:
+			print("You aren't wearing any armor.")
+		elif player.is_armor_slot_filled == 1:
+			player.armor -= self.armor_bonus
+			player.is_armor_slot_filled = 0
+			player.current_armor = "None"
+			player.inventory.append (self.name)
+
+# The player can continuously unequip/equip the item... Need to stop this.
+# Build a slot system for items to prevent this.
+# Also level requirment must be checked (inform the player if they have insufficient level)
+class weapon():
+	"""docstring fos weapon"""
+	def __init__(self, name, level_requirment, damage_bonus):
+		self.name = name
+		self.damage_bonus = damage_bonus
+		self.level_requirment = level_requirment
+
+	def equip_item(self, player):
+		player.damage += self.damage_bonus
+
+	def unequip_item(self, player):
+		player.damage += self.damage_bonus
+
+testweapon = weapon("A good stick", 0, 10)
+super_test_weapon = weapon("Dragon Slayer", 10, 50)
+testarmor = armor("Leather Armor", 0, 10)
+super_test_armor = armor("Shavs Wrap", 10, 50)
+
+class enemy():
+	def __init__(self, name, hp, dmg, xp):
+		self.name = name
+		self.hp = hp
+		self.dmg = dmg
+		# self.lvl = lvl
+		# self.reward = reward
+		self.xp = xp
+
+wolf = enemy("wolf", 10, 1, 10)
 
 
 
 
 
+# def character_sheet():
+# 	print (" name class stats: inventory:")
+
+# # testing list for inventory.
+# player_inventory = ["testString"]
+# # player_inventory.append testweapon
+# def inventory():
+# 	player_inventory.append ("testString2")
+# 	player_inventory.append (testarmor)
+# 	player_inventory.append (player_inventory)
+# 	print(player_inventory)
 
 
 
+# equipment[]
+# want to have an inventory that can be called that lists every item you have in your inventory.
+# list for equipment, too?
+# currency exchange
+# 1 gold 10 silver 100 copper
+# take in user input pick the currency type you want to exchange,
+# user input how much of which currency are you giving them?
+# is it valid?
 
-
-
-
-
-
-
-
-
+# what features will you add by the final, on may 4th?
+# 1. Town/base of operations - buy+sell shop, healing(costs money) - also allows to go to exploring(combat).
+#  - also functional level ups
+#  - In the town, be able to call functional commands, can view character sheet,
+# 2. Enemies
+# 3. Combat.
+# 4. 
+# 5. Shop.
+# 6. items
+# 7. character sheet
 
 
 # credit for this bit of code below https://www.youtube.com/watch?v=hDmnu1qGfkw
@@ -216,71 +359,11 @@ def calc_stats(age, name, endurance, strength, char_class):
 # 	current_experience = 0
 # 	next_level_exp = 100 + current_experience * 2
 
-def character_sheet():
-	print (" name class stats: inventory:")
 
-# testing list for inventory.
-player_inventory = ["testString"]
-# player_inventory.append testweapon
-def inventory():
-	player_inventory.append ("testString2")
-	player_inventory.append (testarmor)
-	player_inventory.append (player_inventory)
-	print(player_inventory)
-# equipment[]
-# want to have an inventory that can be called that lists every item you have in your inventory.
-# list for equipment, too?
-# currency exchange
-# 1 gold 10 silver 100 copper
-# take in user input pick the currency type you want to exchange,
-# user input how much of which currency are you giving them?
-# is it valid?
-
-
-# global armor
-armor = 1
-# global damage
-damage = 1
-# damage += weapon.wpn_dmg_bonus
-class armor():
-	"""docstring fos armor"""
-	def __init__(self, level_requirment, armor_dmg_reduction_bonus, dmg_reduction):
-		self.armor_dmg_reduction_bonus = armor_dmg_reduction_bonus
-		self.level_requirment = level_requirment
-
-	def equip_item(self):
-		global dmg_reduction
-		dmg_reduction += self.armor_dmg_reduction_bonus
-
-	def unequip_item(self):
-		global dmg_reduction
-		dmg_reduction -= self.armor_dmg_reduction_bonus
-
-# The player can continuously unequip/equip the item... Need to stop this.
-# Build a slot system for items to prevent this.
-# Also level requirment must be checked (inform the player if they have insufficient level).
-# and don't equip it.
-class weapon():
-	"""docstring fos weapon"""
-	def __init__(self, level_requirment, wpn_dmg_bonus, damage):
-		self.wpn_dmg_bonus = wpn_dmg_bonus
-		self.level_requirment = level_requirment
-
-	def equip_item(self, player):
-		player.damage
-		damage += self.wpn_dmg_bonus
-
-	def unequip_item(self, player):
-		global damage
-		damage -= self.wpn_dmg_bonus
-
-testweapon = weapon(0, 100, damage)
-testarmor = armor(0, 100, armor)
-
-class enemy():
-	def __init__(self, name, hp, dmg, xp):
-		self.hp = hp
-		self.dmg = dmg
-		# self.lvl = lvl
-		# self.reward = reward
-		self.xp = xp
+# edge cases are infreuqnet/unexpected conditions which might happen due to user input.
+# Like putting a string into an input that wants an int.
+# Test your code for edge cases.
+# account for everything if possible.
+# can be used in cyber security. (like user putting in dangerous code)
+#  code use the stack
+# pytest is something I can use pip to install for streamline tests for functions.
