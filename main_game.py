@@ -302,37 +302,82 @@ class enemy():
 		self.experience_reward = experience_reward
 
 def spawn_wolf():
-	global wolf
+	global enemy
 	enemy = enemy("Wolf", randint(5,12), randint(1,3), randint(0,1), randint(10,30))
 	print("wolf")
 
 def spawn_bandit():
-	global bandit
+	global enemy
 	enemy = enemy("Bandit", randint(10,20), randint(4,10), randint(0,3), randint(50,100))
 	print("bandit")
 
 def spawn_troll():
-	global troll
+	global enemy
 	enemy = enemy("Troll", randint(20,50), randint(5,15), randint(2,10), randint(500,1000))
 	print("troll")
 
 def spawn_dragon():
-	global dragon
+	global enemy
 	enemy = enemy("Dragon", randint(1000,2000), randint(50,100), randint(20,50), randint(10000,30000))
 	print("dragon")
+
+
+def run(player, enemy):
+	run_chance = randint(1,100)
+	print(str (run_chance) + " run chance ")
+	run_away = 0
+	if player.age <= 16:
+		# run_away = 0
+
+		if run_chance <= 90:
+			run_away = 1
+		else:
+			run_away = 0
+
+	elif player.age <= 30:
+		if run_chance <= 50:
+			run_away = 1
+		else:
+			run_away = 0
+
+	elif player.age <= 60:
+		if run_chance <= 30:
+			run_away = 1
+		else:
+			run_away = 0
+
+	elif player.age <= 80:
+		if run_chance <= 10:
+			run_away = 1
+		else:
+			run_away = 0
 
 
 
 # working on this 
 def players_turn(player, enemy):
 	print("It's your turn! \nattack, run, item")
-	while action != "attack" or "run" or "item"
+	action = ""
+	while action != "attack" or "run" or "item":
 		action = input("What is your move?")
 		if "attack" in (action):
 			# deal player damage to enemy hp,
-		if "run" in (action):
+			# if player.damage > enemy.armor:
+			combat_damage = player.damage
+			combat_damage -= enemy.armor
+			if combat_damage > 0:
+				enemy.hitpoints -= combat_damage
+				# check if enemy is dead
+				print("You struck the enemy for " + str(combat_damage) + "! " + str(enemy.armor) + " was blocked by their armor!")
+			else:
+				print("The enemies armor is too high!")
+				enemy_turn(player, enemy)
+		elif "run" in (action):
 			# break. get out of combat, chance the monster will get a free attack
-		if "item" in (action):
+			print("you run away")
+			run()
+			break
+		elif "item" in (action):
 			# loop through actons with items can take off an item, but need to equip an item.
 			print(player.inventory)
 			item_action = input("use, item name")
@@ -341,18 +386,39 @@ def players_turn(player, enemy):
 
 
 def enemy_turn(player, enemy):
+	print("nothing happens yet!")
+	players_turn()
+
+
+def level_up_check(player):
+	# fill up with print statments, figure out what's wrong.
+	if player.current_experience >= player.next_level_exp:
+		cross_over_experience = player.current_experience - player.next_level_exp
+		player.level += 1
+		player.attribute_points +=2
+		# total_experience += current_experience
+
+		player.next_level_exp = float(player.next_level_exp)
+		player.next_level_exp = player.current_experience ** 1.2 / 2
+		player.next_level_exp = int(player.next_level_exp)
+		player.current_experience += cross_over_experience
+		level_up_check(player)
+		# player.current_experience = 0
 
 
 
-
-def combat(player, enemy):
-	while enemy hp >= 1:
+def combat(player, enemy, turn_order):
+	while enemy.hitpoints >= 1:
 		if player_first == 1:
 			players_turn(player, enemy)
 			# option, run away, attack, use/swap items, go to enemy turn
 		else:
 			enemy_turn(player, enemy)
 			# attack the player, maybe add abilities for each enemy
+	if enemy.hitpoints <= 0:
+		print("You defeated the " + str(enemy.name) + "! ")
+		player.current_experience += enemy.experience_reward
+		level_up_check(player)
 
 		# (if player dies, endgame)
 		# if enemy dies, player gains exp, check lvl up.
@@ -374,7 +440,7 @@ def encounter(player):
 	player_first = 0
 
 	if player.age <= 16:
-		player_first = 0
+		# player_first = 0
 		if turn_order <= 90:
 			player_first = 1
 		else:
@@ -408,7 +474,7 @@ def encounter(player):
 		spawn_dragon()
 
 		# battle scene
-		combat(player, enemy):
+		combat(player, enemy, turn_order)
 
 
 
