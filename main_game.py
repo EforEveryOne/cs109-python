@@ -1,5 +1,6 @@
 import time
-
+from random import randint
+# print(randint(0, 9))
 
 def start():
 	start = ""
@@ -63,16 +64,16 @@ def input_age(age, name):
 		print(str(age) + "? ")
 		# time.sleep(2)
 		print("You've got some experience but there's an entire world left to explore.")
-		strength = 7
-		endurance = 7
+		strength = 8
+		endurance = 8
 		input_class(age, name, endurance, strength)
 	# 31-60
 	elif age <= 60:
 		print(str(age) + "? ")
 		# time.sleep(2)
 		print("You're not as young as you once were but you've got experience and know your way around the world.")
-		strength = 5
-		endurance = 5
+		strength = 6
+		endurance = 6
 		input_class(age, name, endurance, strength)
 	# 61-80
 	elif age <= 80:
@@ -94,51 +95,38 @@ def input_class(age, name, endurance, strength):
 	# time.sleep(4)
 	print("Tell me...")
 	# time.sleep(3)
-	while (char_class) != "tank" or "aggressive":
-		char_class = input("Do you consider yourself more of a Tank or an Aggressive person? ").lower()
-		if "tank" in (char_class):
+	while (char_class) != "defensive" or "aggressive":
+		char_class = input("Do you consider yourself more of a Defensive or an Aggressive person? ").lower()
+		if "defensive" in (char_class):
+			char_class = "Tank"
 			endurance += 5
 			# time.sleep(2)
 			print ("Congratulations. Your character is complete. \nYou are ready for adventure! \n\n")
 			# time.sleep(2)
-
-			# print("Your name is: " + str(name).capitalize() + "\nYour age is: " + str(age) + "\nYour class is: " + str(char_class).capitalize())
 			calc_stats(age, name, endurance, strength, char_class)
-			# character_sheet()
-			# inventory()
 			break
 		elif "aggressive" in (char_class):
+			char_class = "Fighter"
 			strength += 5
 			# time.sleep(2)
 			print ("Congratulations. Your character is complete. \nYou are ready for adventure! \n\n")
 			# time.sleep(2)
-			# print("Your name is: " + str(name).capitalize() + "\nYour age is: " + str(age) + "\nYour class is: " + str(char_class).capitalize())
 			calc_stats(age, name, endurance, strength, char_class)
-			# character_sheet()
-			# inventory()
 			break
 		else:
-			print("Be clear with me. Tank or an Aggressive? ")
+			print("Be clear with me. Defensive or an Aggressive? ")
 			time.sleep(1)
 
-# TODO
-# create a for loep so you can call exaclty how many times you want it to run.
-
+# Utility function to "clean" console
 def clear(amount):
 	i = 0
 	for i in range(amount):
-		time.sleep(0.2)
+		time.sleep(0.07)
 		print("\n")
 		i+=1
 	
-
-
-# Compiles all the player info gathered in the previus functions
-# creates the player_character class object and passes in all the vars at their custom inputs.
+# Compiles all the player info gathered in the previous functions
 def calc_stats(age, name, endurance, strength, char_class):
-	# hitpoints = 0
-	# damage = 0
-
 	attribute_points = 0
 	level = 1
 	hitpoints = endurance * 2 + level
@@ -154,11 +142,11 @@ def calc_stats(age, name, endurance, strength, char_class):
 	is_armor_slot_filled = 0
 	current_weapon = "None"
 	current_armor = "None"
-	# print(hitpoints, damage, level, strength, endurance, attribute_points, gold)
 
+	# Creates the player_character class object and passes in all the vars at their custom inputs.
 	class player_character:
-		def __init__(self, name, age, char_class, endurance, strength, hitpoints, damage, armor, level, 
-			         attribute_points, current_experience, next_level_exp, gold, inventory,
+		def __init__(self, name, age, char_class, endurance, strength, hitpoints, damage, armor,
+				     level, attribute_points, current_experience, next_level_exp, gold, inventory,
 			         is_weapon_slot_filled, is_armor_slot_filled, current_weapon, current_armor):
 			self.name = name
 			self.age = age
@@ -179,17 +167,20 @@ def calc_stats(age, name, endurance, strength, char_class):
 			self.current_weapon = current_weapon
 			self.current_armor = current_armor
 
+		# Character sheet (player information).
 		def details(self):
-			print("CHARACTER SHEET: \nName: " + str(self.name) + ". \nAge: " + str(self.age) +
-				  ". \nClass: " + str(self.char_class).upper() + ". \nEndurance: " + str(self.endurance) +
+			print("CHARACTER SHEET: \nName: " + str(self.name).capitalize() + ". \nAge: " + str(self.age) +
+				  ". \nClass: " + str(self.char_class) + ". \nEndurance: " + str(self.endurance) +
 				  ". \nStrength: " + str(self.strength) + ". \nHitpoints: " + str(self.hitpoints) +
 				  ". \nDamage: " + str(self.damage) + ". \nArmor: " + str(self.armor) + ". \nLevel: " + str(self.level) +
 				  ". \nAttribute Points: " + str(self.attribute_points) + ". \nCurrent Experience: " +
 				  str(self.current_experience) + ". \nExp to next Level: " + 
 				  str(self.next_level_exp) + ". \nGold: " + str(self.gold) + ". \nCurrent Weapon: " + str(self.current_weapon) + 
 				  ". \nCurrnet Armor: " + str(self.current_armor) + ". ")
+
 	# How else to allow the class object global scope?
 	global player
+	# Create the player with all the required information.
 	player = player_character(name, age, char_class, endurance, strength, hitpoints, damage, armor, level,
 		                      attribute_points, current_experience, next_level_exp, gold, inventory,
 		                      is_weapon_slot_filled, is_armor_slot_filled, current_weapon, current_armor)
@@ -207,12 +198,11 @@ def calc_stats(age, name, endurance, strength, char_class):
 	# time.sleep(2)
 	print("The wolrd fades away...")
 	# time.sleep(4)
-	print("\n" * 100)
+	print("\n" * 40)
 	# time.sleep(3)
 	print("You wake up on a dusty road.")
 	# town()
 	# return player
-
 
 # Can do it by passing in arguments instead but need to keep track of them between transitions
 # (requires having other areas built)
@@ -224,12 +214,9 @@ def town():
 	# if first_meeting == True:
 		print("Welcome to town, traveller! ")
 		first_visit = 0
-		
-
 	# while True:
 
-
-
+# Creating object group for armor
 class armor():
 	"""docstring fos armor"""
 	def __init__(self, name, level_requirment, armor_bonus):
@@ -242,7 +229,7 @@ class armor():
 			print("Your level is too low. \nYour level: " + str(player.level) +
 				  ". \n" + "Item level: " + str(self.level_requirment) + ". ")
 		elif player.is_armor_slot_filled == 1:
-			print("You already have armor. " + "Currnet Armor: " + str(player.current_armor))
+			print("You already have armor. " + "Current Armor: " + str(player.current_armor))
 		elif (self.name) in player.inventory:
 			player.inventory.remove (self.name)
 			player.armor += self.armor_bonus
@@ -255,16 +242,14 @@ class armor():
 			
 	def unequip_item(self, player):
 		if player.is_armor_slot_filled == 0:
-			print("You aren't wearing any armor.")
+			print("You aren't wearing any armor. ")
 		elif player.is_armor_slot_filled == 1:
 			player.armor -= self.armor_bonus
 			player.is_armor_slot_filled = 0
 			player.current_armor = "None"
 			player.inventory.append (self.name)
 
-# The player can continuously unequip/equip the item... Need to stop this.
-# Build a slot system for items to prevent this.
-# Also level requirment must be checked (inform the player if they have insufficient level)
+# Creating object group for weapons
 class weapon():
 	"""docstring fos weapon"""
 	def __init__(self, name, level_requirment, damage_bonus):
@@ -273,33 +258,165 @@ class weapon():
 		self.level_requirment = level_requirment
 
 	def equip_item(self, player):
-		player.damage += self.damage_bonus
-
+		if player.level < self.level_requirment:
+			print("Your level is too low. \nYour level: " + str(player.level) +
+				  ". \n" + "Item level: " + str(self.level_requirment) + ". ")
+		elif player.is_weapon_slot_filled == 1:
+			print("You already have a weapon. " + "Current Weapon: " + str(player.current_weapon))
+		elif (self.name) in player.inventory:
+			player.inventory.remove (self.name)
+			player.damage += self.damage_bonus
+			player.is_weapon_slot_filled = 1
+			player.current_weapon = str(self.name)
+		# Putting armor on for the first time (can't remove it from inventory).
+		# Maybe can fix by adding to inventory when found, that can happen when more features are added. 
+		else:
+			player.damage += self.damage_bonus
+			player.is_weapon_slot_filled = 1
+			player.current_weapon = str(self.name)
+			
 	def unequip_item(self, player):
-		player.damage += self.damage_bonus
+		if player.is_weapon_slot_filled == 0:
+			print("You aren't wielding a weapon. ")
+		elif player.is_weapon_slot_filled == 1:
+			player.damage -= self.damage_bonus
+			player.is_weapon_slot_filled = 0
+			player.current_weapon = "None"
+			player.inventory.append (self.name)
+
 
 testweapon = weapon("A good stick", 0, 10)
 super_test_weapon = weapon("Dragon Slayer", 10, 50)
+
 testarmor = armor("Leather Armor", 0, 10)
 super_test_armor = armor("Shavs Wrap", 10, 50)
 
+
+
 class enemy():
-	def __init__(self, name, hp, dmg, xp):
+	def __init__(self, name, hitpoints, damage, armor, experience_reward):
 		self.name = name
-		self.hp = hp
-		self.dmg = dmg
-		# self.lvl = lvl
-		# self.reward = reward
-		self.xp = xp
+		self.hitpoints = hitpoints
+		self.damage = damage
+		self.armor = armor
+		self.experience_reward = experience_reward
 
-wolf = enemy("wolf", 10, 1, 10)
+def spawn_wolf():
+	global wolf
+	enemy = enemy("Wolf", randint(5,12), randint(1,3), randint(0,1), randint(10,30))
+	print("wolf")
+
+def spawn_bandit():
+	global bandit
+	enemy = enemy("Bandit", randint(10,20), randint(4,10), randint(0,3), randint(50,100))
+	print("bandit")
+
+def spawn_troll():
+	global troll
+	enemy = enemy("Troll", randint(20,50), randint(5,15), randint(2,10), randint(500,1000))
+	print("troll")
+
+def spawn_dragon():
+	global dragon
+	enemy = enemy("Dragon", randint(1000,2000), randint(50,100), randint(20,50), randint(10000,30000))
+	print("dragon")
+
+
+
+# working on this 
+def players_turn(player, enemy):
+	print("It's your turn! \nattack, run, item")
+	while action != "attack" or "run" or "item"
+		action = input("What is your move?")
+		if "attack" in (action):
+			# deal player damage to enemy hp,
+		if "run" in (action):
+			# break. get out of combat, chance the monster will get a free attack
+		if "item" in (action):
+			# loop through actons with items can take off an item, but need to equip an item.
+			print(player.inventory)
+			item_action = input("use, item name")
+			# if item_action = How to check for weapon/armor/or other item?
+
+
+
+def enemy_turn(player, enemy):
+
+
+
+
+def combat(player, enemy):
+	while enemy hp >= 1:
+		if player_first == 1:
+			players_turn(player, enemy)
+			# option, run away, attack, use/swap items, go to enemy turn
+		else:
+			enemy_turn(player, enemy)
+			# attack the player, maybe add abilities for each enemy
+
+		# (if player dies, endgame)
+		# if enemy dies, player gains exp, check lvl up.
+		# end loop, back to wilderness scene
+
+
+		
+
+
+
+# encounter determines who goes first, and spawns the enemy,
+# then calls the combat function based on who is going first.
+# pass in the arguments required (the player, and enemy)
+def encounter(player):
+	turn_order = randint(1,100)
+	print(turn_order)
+	global player_first
+	
+	player_first = 0
+
+	if player.age <= 16:
+		player_first = 0
+		if turn_order <= 90:
+			player_first = 1
+		else:
+			player_first = 0
+	elif player.age <= 30:
+		if turn_order <= 50:
+			player_first = 1
+		else:
+			player_first = 0
+	elif player.age <= 60:
+		if turn_order <= 30:
+			player_first = 1
+		else:
+			player_first = 0
+	elif player.age <= 80:
+		if turn_order <= 10:
+			player_first = 1
+		else:
+			player_first = 0
+
+	print(player_first)
+	# spawn a randomized enemy
+	randomize_spawn = randint(1,100)
+	if randomize_spawn <= 50:
+		spawn_wolf()
+	elif randomize_spawn <= 90:
+		spawn_bandit()
+	elif randomize_spawn <= 99:
+		spawn_troll()
+	elif randomize_spawn == 100:
+		spawn_dragon()
+
+		# battle scene
+		combat(player, enemy):
 
 
 
 
 
-# def character_sheet():
-# 	print (" name class stats: inventory:")
+# need to add town scene, heals + shop
+
+
 
 # # testing list for inventory.
 # player_inventory = ["testString"]
@@ -325,25 +442,10 @@ wolf = enemy("wolf", 10, 1, 10)
 # 1. Town/base of operations - buy+sell shop, healing(costs money) - also allows to go to exploring(combat).
 #  - also functional level ups
 #  - In the town, be able to call functional commands, can view character sheet,
-# 2. Enemies
 # 3. Combat.
-# 4. 
 # 5. Shop.
-# 6. items
-# 7. character sheet
+# level up funcationality, attribute point spending.
 
-
-# credit for this bit of code below https://www.youtube.com/watch?v=hDmnu1qGfkw
-# def double_it(formal_parameter):
-# 	print(formal_parameter, id(formal_parameter))
-# 	doubled = formal_parameter * 2
-# 	print(doubled, id(doubled))
-# 	return doubled
-
-# argument_value = 3
-# print(argument_value, id(argument_value))
-# returned_value = double_it(argument_value)
-# print(returned_value, id(returned_value))
 
 
 # level up
