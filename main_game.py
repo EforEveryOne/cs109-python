@@ -144,6 +144,7 @@ def calc_stats(age, name, endurance, strength, char_class):
 	current_armor = "None"
 
 	# Creates the player_character class object and passes in all the vars at their custom inputs.
+	# will need to change player hipoints to a max hitpoints and a current hitpoints.
 	class player_character:
 		def __init__(self, name, age, char_class, endurance, strength, hitpoints, damage, armor,
 				     level, attribute_points, current_experience, next_level_exp, gold, inventory,
@@ -206,15 +207,20 @@ def calc_stats(age, name, endurance, strength, char_class):
 
 # Can do it by passing in arguments instead but need to keep track of them between transitions
 # (requires having other areas built)
-first_visit = 1
-def town():
+# first_visit = 1
+def town(player):
 	# global first_visit
 	# global first_meeting
-	if first_visit == 1:
+	# if first_visit == 1:
 	# if first_meeting == True:
-		print("Welcome to town, traveller! ")
-		first_visit = 0
+	print("Welcome to town, traveller! ")
+	print("You should no longer be in combat")
+	player.details()
+		# first_visit = 0
 	# while True:
+
+def wilderness(player):
+	print("You are in the wilderness! \nWhat do you want to do? \n\nYou can head back to town or explore the wilderness!")
 
 # Creating object group for armor
 class armor():
@@ -293,7 +299,7 @@ super_test_armor = armor("Shavs Wrap", 10, 50)
 
 
 
-class enemy():
+class enemy_class():
 	def __init__(self, name, hitpoints, damage, armor, experience_reward):
 		self.name = name
 		self.hitpoints = hitpoints
@@ -303,92 +309,16 @@ class enemy():
 
 def spawn_wolf():
 	global enemy
-	enemy = enemy("Wolf", randint(5,12), randint(1,3), randint(0,1), randint(10,30))
-	print("wolf")
-
+	enemy = enemy_class("Wolf", randint(5,12), randint(1,3), randint(0,1), randint(10,30))
 def spawn_bandit():
 	global enemy
-	enemy = enemy("Bandit", randint(10,20), randint(4,10), randint(0,3), randint(50,100))
-	print("bandit")
-
+	enemy = enemy_class("Bandit", randint(10,20), randint(4,10), randint(0,3), randint(50,100))
 def spawn_troll():
 	global enemy
-	enemy = enemy("Troll", randint(20,50), randint(5,15), randint(2,10), randint(500,1000))
-	print("troll")
-
+	enemy = enemy_class("Troll", randint(20,50), randint(5,15), randint(2,10), randint(500,1000))
 def spawn_dragon():
 	global enemy
-	enemy = enemy("Dragon", randint(1000,2000), randint(50,100), randint(20,50), randint(10000,30000))
-	print("dragon")
-
-
-def run(player, enemy):
-	run_chance = randint(1,100)
-	print(str (run_chance) + " run chance ")
-	run_away = 0
-	if player.age <= 16:
-		# run_away = 0
-
-		if run_chance <= 90:
-			run_away = 1
-		else:
-			run_away = 0
-
-	elif player.age <= 30:
-		if run_chance <= 50:
-			run_away = 1
-		else:
-			run_away = 0
-
-	elif player.age <= 60:
-		if run_chance <= 30:
-			run_away = 1
-		else:
-			run_away = 0
-
-	elif player.age <= 80:
-		if run_chance <= 10:
-			run_away = 1
-		else:
-			run_away = 0
-
-
-
-# working on this 
-def players_turn(player, enemy):
-	print("It's your turn! \nattack, run, item")
-	action = ""
-	while action != "attack" or "run" or "item":
-		action = input("What is your move?")
-		if "attack" in (action):
-			# deal player damage to enemy hp,
-			# if player.damage > enemy.armor:
-			combat_damage = player.damage
-			combat_damage -= enemy.armor
-			if combat_damage > 0:
-				enemy.hitpoints -= combat_damage
-				# check if enemy is dead
-				print("You struck the enemy for " + str(combat_damage) + "! " + str(enemy.armor) + " was blocked by their armor!")
-			else:
-				print("The enemies armor is too high!")
-				enemy_turn(player, enemy)
-		elif "run" in (action):
-			# break. get out of combat, chance the monster will get a free attack
-			print("you run away")
-			run()
-			break
-		elif "item" in (action):
-			# loop through actons with items can take off an item, but need to equip an item.
-			print(player.inventory)
-			item_action = input("use, item name")
-			# if item_action = How to check for weapon/armor/or other item?
-
-
-
-def enemy_turn(player, enemy):
-	print("nothing happens yet!")
-	players_turn()
-
+	enemy = enemy_class("Dragon", randint(1000,2000), randint(50,100), randint(20,50), randint(10000,30000))
 
 def level_up_check(player):
 	# fill up with print statments, figure out what's wrong.
@@ -397,71 +327,156 @@ def level_up_check(player):
 		player.level += 1
 		player.attribute_points +=2
 		# total_experience += current_experience
-
 		player.next_level_exp = float(player.next_level_exp)
 		player.next_level_exp = player.current_experience ** 1.2 / 2
 		player.next_level_exp = int(player.next_level_exp)
 		player.current_experience += cross_over_experience
+		# calling the function because it's supposed to loop through itself, leveling the player up
+		# as long as they have an overflow of xp required for the next level.
+		# need to fix up the logic.
 		level_up_check(player)
 		# player.current_experience = 0
 
+def bad_end():
+	print("You are dead. Game over. ")
+	print("this is in the function bad_end")
 
-
-def combat(player, enemy, turn_order):
-	while enemy.hitpoints >= 1:
-		if player_first == 1:
-			players_turn(player, enemy)
-			# option, run away, attack, use/swap items, go to enemy turn
+def players_turn(player, enemy, run_away):
+	print("It's your turn! \nYou can do the following actions: \n\nATTACK \nRUN \nITEM\n ")
+	if run_away == 0:
+		if player.hitpoints <= 0:
+			print("calling bad_end function fron players_turn 'if player.hitpoints <= 0")
+			bad_end()
+		elif enemy.hitpoints <= 0:
+			print("the enemy hp is not greater than 0, they should be dead. this is printed inside players_turn")
+			print("You defeated the " + str(enemy.name) + "! ")
+			player.current_experience += enemy.experience_reward
+			level_up_check(player)
+		elif enemy.hitpoints >= 1:
+			print("the enemy hp is greater than 1, so move onto player turn input 'action'")
+			action = ""
+			while action != "attack" or "run" or "item":
+				action = input("\nWhat is your action? ").lower()
+				if "attack" in (action):
+					combat_damage = player.damage
+					combat_damage -= enemy.armor
+					if combat_damage > 0:
+						enemy.hitpoints -= combat_damage
+						# check if enemy is dead
+						print("You struck the enemy for " + str(combat_damage) + " damage after " + str(enemy.armor) +
+							  " was blocked by their armor! ")
+						if enemy.hitpoints >= 1:
+							enemy_turn(player, enemy, run_away)
+							break
+						else:
+							print("You defeated the " + str(enemy.name) + "! ")
+							player.current_experience += enemy.experience_reward
+							level_up_check(player)
+							break
+					else:
+						print("The enemies armor is too high! ")
+						enemy_turn(player, enemy, run_away)
+						break
+				elif "run" in (action):
+					run_chance = randint(1,100)
+					print(str (run_chance) + " rolled for run chance ")
+					if player.age <= 16:
+						if run_chance <= 90:
+							run_away = 1
+							print("run_away is set to: " + str(run_away) + "You should run away and leave combat.")
+							print("You managed to escape the " + str(enemy.name) + "! ")
+							break
+						else:
+							run_away = 0
+							print("run_away is set to: " + str(run_away) + "You should not be able to run away.")
+							print("The " + str(enemy.name) + " prevented you from escaping! ")
+							enemy_turn(player, enemy, run_away)
+							break
+					elif player.age <= 30:
+						if run_chance <= 50:
+							run_away = 1
+							print("run_away is set to: " + str(run_away) + "You should run away and leave combat.")
+							print("You managed to escape the " + str(enemy.name) + "! ")
+							break
+						else:
+							run_away = 0
+							print("run_away is set to: " + str(run_away) + "You should not be able to run away.")
+							print("The " + str(enemy.name) + " prevented you from escaping! ")
+							enemy_turn(player, enemy, run_away)
+							break
+					elif player.age <= 60:
+						if run_chance <= 30:
+							run_away = 1
+							print("run_away is set to: " + str(run_away) + "You should run away and leave combat.")
+							print("You managed to escape the " + str(enemy.name) + "! ")
+						else:
+							run_away = 0
+							print("run_away is set to: " + str(run_away) + "You should not be able to run away.")
+							print("The " + str(enemy.name) + " prevented you from escaping! ")
+							enemy_turn(player, enemy, run_away)
+							break
+					elif player.age <= 80:
+						if run_chance <= 10:
+							run_away = 1
+							print("run_away is set to: " + str(run_away) + "You should run away and leave combat.")
+							print("You managed to escape the " + str(enemy.name) + "! ")
+							break
+						else:
+							run_away = 0
+							print("run_away is set to: " + str(run_away) + "You should not be able to run away.")
+							print("The " + str(enemy.name) + " prevented you from escaping! ")
+							enemy_turn(player, enemy, run_away)
+							break
+					# run(player, enemy)
+					# break
+				# elif "item" in (action):
+				# 	# loop through actons with items can take off an item, but need to equip an item.
+				# 	print(player.inventory)
+				# 	item_action = input("use, item name ")
+				# 	# if item_action = How to check for weapon/armor/or other item?
+				# 	break
+				else:
+					# infinite loop happens here. Why?
+					print("Please type 'attack' 'run' or 'item' into the console. ")
 		else:
-			enemy_turn(player, enemy)
-			# attack the player, maybe add abilities for each enemy
-	if enemy.hitpoints <= 0:
-		print("You defeated the " + str(enemy.name) + "! ")
-		player.current_experience += enemy.experience_reward
-		level_up_check(player)
-
-		# (if player dies, endgame)
-		# if enemy dies, player gains exp, check lvl up.
-		# end loop, back to wilderness scene
-
-
-		
+			print("You successfully ran away! - players_turn function")
+			wilderness(player)
 
 
 
-# encounter determines who goes first, and spawns the enemy,
-# then calls the combat function based on who is going first.
-# pass in the arguments required (the player, and enemy)
-def encounter(player):
-	turn_order = randint(1,100)
-	print(turn_order)
-	global player_first
+def enemy_turn(player, enemy, run_away):
+	# If run away is not true, continue the fight
+	if run_away == 0:
+		if player.hitpoints <= 0:
+			print("calling bad_end function fron enemy_turn 'if player.hitpoints <= 0")
+			bad_end()
+			# break
+		elif enemy.hitpoints >= 1:
+			print("It's the enemy's turn!")
+			combat_damage = enemy.damage
+			combat_damage -= player.armor
+			if combat_damage > 0:
+				player.hitpoints -= combat_damage
+				print("The " + str(enemy.name) + " hit you for " + str(combat_damage) + " damage after " + str(player.armor) +
+					  " was blocked by your armor!")
+				print("Player HP: " + str(player.hitpoints))
+				# check if player is dead
+				if player.hitpoints <= 0:
+					print("calling bad_end function fron enemy_turn, after player took dmg from enemy")
+					bad_end()
+					# break
+				players_turn(player, enemy, run_away)
+			else:
+				print("Your armor protects you from the " + str(enemy.name) + "! ")
+				players_turn(player, enemy, run_away)
+		else:
+			print("the enemy should be dead!")
+			player.details()
+	else:
+		print("the player should have ran away!")
+		player.details()
 	
-	player_first = 0
-
-	if player.age <= 16:
-		# player_first = 0
-		if turn_order <= 90:
-			player_first = 1
-		else:
-			player_first = 0
-	elif player.age <= 30:
-		if turn_order <= 50:
-			player_first = 1
-		else:
-			player_first = 0
-	elif player.age <= 60:
-		if turn_order <= 30:
-			player_first = 1
-		else:
-			player_first = 0
-	elif player.age <= 80:
-		if turn_order <= 10:
-			player_first = 1
-		else:
-			player_first = 0
-
-	print(player_first)
+def create_random_enemy():
 	# spawn a randomized enemy
 	randomize_spawn = randint(1,100)
 	if randomize_spawn <= 50:
@@ -472,66 +487,55 @@ def encounter(player):
 		spawn_troll()
 	elif randomize_spawn == 100:
 		spawn_dragon()
+# encounter determines who goes first, and spawns the enemy,
+# pass in the arguments required (the player, and enemy, run_away)
+def encounter(player):
+	"""encounter is the function that initiates combat. encounter determines turn order and enemy type"""
+	run_away = 0
+	# Decide who goes first.
+	turn_order = randint(1,100)
+	print("Turn order roll: " + str(turn_order))
+	if player.age <= 16:
+		if turn_order <= 90:
+			player_first = 1
+		else:
+			player_first = 0
+	elif player.age <= 30:
+		if turn_order <= 50:
+			player_first = 1
+		else:
+			player_first = 0
+	elif player.age <= 60:
+		if turn_order <= 35:
+			player_first = 1
+		else:
+			player_first = 0
+	elif player.age <= 80:
+		if turn_order <= 20:
+			player_first = 1
+		else:
+			player_first = 0
+	# Create a randomized enemy.
+	create_random_enemy()
+	print("\nA " + str(enemy.name) + " has appeared! \n")
+	# Check who goes first.
+	if player_first == 0:
+		print("The " + str(enemy.name) + " takes action before you can react! ")
+		enemy_turn(player, enemy, run_away)
+	elif player_first == 1:
+		print("You're able to act before the " + str(enemy.name) + " realizes! ")
+		players_turn(player, enemy, run_away)
+	# Combat is over! Back to the wilderness
+	print("THIS IS THE END OF THE ECNOUNTER!")
+	wilderness(player)
 
-		# battle scene
-		combat(player, enemy, turn_order)
 
 
 
 
-
-# need to add town scene, heals + shop
-
-
-
-# # testing list for inventory.
-# player_inventory = ["testString"]
-# # player_inventory.append testweapon
-# def inventory():
-# 	player_inventory.append ("testString2")
-# 	player_inventory.append (testarmor)
-# 	player_inventory.append (player_inventory)
-# 	print(player_inventory)
-
-
-
-# equipment[]
-# want to have an inventory that can be called that lists every item you have in your inventory.
-# list for equipment, too?
-# currency exchange
-# 1 gold 10 silver 100 copper
-# take in user input pick the currency type you want to exchange,
-# user input how much of which currency are you giving them?
-# is it valid?
-
-# what features will you add by the final, on may 4th?
 # 1. Town/base of operations - buy+sell shop, healing(costs money) - also allows to go to exploring(combat).
 #  - also functional level ups
 #  - In the town, be able to call functional commands, can view character sheet,
 # 3. Combat.
 # 5. Shop.
 # level up funcationality, attribute point spending.
-
-
-
-# level up
-# to be placed after wherever exp is gained to check for level up
-# def level_up(player.level, player.current_experience, player.attribute_points, player.next_level_exp):
-# 	level
-# 	current_experience
-# 	next_level_exp
-# 	attribute_points
-# # level up process, level increase, attribute points to spend, set exp for next level
-# 	level += 1
-# 	attribute_points += 2
-# 	current_experience = 0
-# 	next_level_exp = 100 + current_experience * 2
-
-
-# edge cases are infreuqnet/unexpected conditions which might happen due to user input.
-# Like putting a string into an input that wants an int.
-# Test your code for edge cases.
-# account for everything if possible.
-# can be used in cyber security. (like user putting in dangerous code)
-#  code use the stack
-# pytest is something I can use pip to install for streamline tests for functions.
