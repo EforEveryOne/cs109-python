@@ -115,7 +115,7 @@ def input_class(age, name, endurance, strength):
 			break
 		else:
 			print("Be clear with me. Defensive or an Aggressive? ")
-			time.sleep(1)
+			# time.sleep(0.5)
 
 # Googled around looking for a clear console function, simplest method was:
 # print("\n" * 50)
@@ -126,13 +126,14 @@ def clear(amount):
 	for i in range(amount):
 		time.sleep(0.07)
 		print("\n")
-		i+=1
+		i += 1
 	
 # Compiles all the player info gathered in the previous functions
 def calc_stats(age, name, endurance, strength, char_class):
 	attribute_points = 0
 	level = 1
-	hitpoints = endurance * 2 + level
+	max_hitpoints = endurance * 2 + level
+	current_hitpoints = max_hitpoints
 	damage = strength / 2 + level
 	damage = int(damage)
 	armor = 0
@@ -149,15 +150,16 @@ def calc_stats(age, name, endurance, strength, char_class):
 	# Creates the player_character class object and passes in all the vars at their custom inputs.
 	# will need to change player hipoints to a max hitpoints and a current hitpoints.
 	class player_character:
-		def __init__(self, name, age, char_class, endurance, strength, hitpoints, damage, armor,
-				     level, attribute_points, current_experience, next_level_exp, gold, inventory,
+		def __init__(self, name, age, char_class, endurance, strength, current_hitpoints, max_hitpoints,
+			         damage, armor, level, attribute_points, current_experience, next_level_exp, gold, inventory,
 			         is_weapon_slot_filled, is_armor_slot_filled, current_weapon, current_armor):
 			self.name = name
 			self.age = age
 			self.char_class = char_class
 			self.endurance = endurance
 			self.strength = strength
-			self.hitpoints = hitpoints
+			self.current_hitpoints = current_hitpoints
+			self.max_hitpoints = max_hitpoints
 			self.damage = damage
 			self.armor = armor
 			self.level = level
@@ -175,19 +177,24 @@ def calc_stats(age, name, endurance, strength, char_class):
 		def details(self):
 			print("CHARACTER SHEET: \nName: " + str(self.name).capitalize() + ". \nAge: " + str(self.age) +
 				  ". \nClass: " + str(self.char_class) + ". \nEndurance: " + str(self.endurance) +
-				  ". \nStrength: " + str(self.strength) + ". \nHitpoints: " + str(self.hitpoints) +
-				  ". \nDamage: " + str(self.damage) + ". \nArmor: " + str(self.armor) + ". \nLevel: " + str(self.level) +
-				  ". \nAttribute Points: " + str(self.attribute_points) + ". \nCurrent Experience: " +
-				  str(self.current_experience) + ". \nExp to next Level: " + 
-				  str(self.next_level_exp) + ". \nGold: " + str(self.gold) + ". \nCurrent Weapon: " + str(self.current_weapon) + 
-				  ". \nCurrnet Armor: " + str(self.current_armor) + ". ")
+				  ". \nStrength: " + str(self.strength) + ". \nHitpoints: " + str(self.current_hitpoints) +
+				  "/" + str(self.max_hitpoints) + ". \nDamage: " + str(self.damage) + ". \nArmor: " +
+				  str(self.armor) + ". \nLevel: " + str(self.level) + ". \nAttribute Points: " +
+				  str(self.attribute_points) + ". \nCurrent Experience: " + str(self.current_experience) + 
+				  ". \nExp to next Level: " + str(self.next_level_exp) + ". \nGold: " + str(self.gold) + 
+				  ". \nCurrent Weapon: " + str(self.current_weapon) + ". \nCurrnet Armor: " + 
+				  str(self.current_armor) + ". \nInventory: " + str(self.inventory))
+
+		def inventory_management(self):
+			print("huh")
 
 	# Make the player global to give full scope access to the rest of the functions that rely on it.
 	global player
 	# Create the player with all the required information gathered in the previous functions.
-	player = player_character(name, age, char_class, endurance, strength, hitpoints, damage, armor, level,
-		                      attribute_points, current_experience, next_level_exp, gold, inventory,
-		                      is_weapon_slot_filled, is_armor_slot_filled, current_weapon, current_armor)
+	player = player_character(name, age, char_class, endurance, strength, current_hitpoints, max_hitpoints,
+							  damage, armor, level, attribute_points, current_experience, next_level_exp,
+							  gold, inventory, is_weapon_slot_filled, is_armor_slot_filled, current_weapon,
+							  current_armor)
 	player.details()
 	# time.sleep(6)
 	# clear(1)
@@ -202,35 +209,13 @@ def calc_stats(age, name, endurance, strength, char_class):
 	# time.sleep(2)
 	print("The wolrd fades away...")
 	# time.sleep(4)
-	print("\n" * 40)
+	print("\n" * 50)
 	# time.sleep(3)
 	print("You wake up on a dusty road.")
-	# town()
+	town_first_visit()
 	# return player
 
-# Can do it by passing in arguments instead but need to keep track of them between transitions
-# (requires having other areas built)
-# first_visit = 1
-def town(player):
-	# global first_visit
-	# global first_meeting
-	# if first_visit == 1:
-	# if first_meeting == True:
-	print("Welcome to town, traveller! ")
-	print("You should no longer be in combat")
-	player.details()
-		# first_visit = 0
-	# while True:
 
-def wilderness(player):
-	print("You are in the wilderness! \nWhat do you want to do? \n\nYou can head back to town or explore the wilderness!")
-	# make a loop asking for text input, that will run a function:
-	# explore the wilderness more (encounter)
-	# Go back to town (from there you'll have the same kind of setup but different functions, like shop)
-	# character details
-	# spend attribute points.
-	# item access, manage equipment
-	# 
 
 
 # need to add a create armor and weapon function that can be dropped as loot. How to randommise the name?
@@ -354,6 +339,134 @@ def level_up_check(player):
 		level_up_check(player)
 		# player.current_experience = 0
 
+
+
+# BEFORE CALLING THIS FUNCTION CHECK IF THEY HAVE ATTRIBUTE POINTS > 0
+def spend_attributes():
+	print("\nUnspent points: " + str(player.attribute_points) + "\nStrength: " 
+		  + str(player.strength) + "\nEndurance: " + str(player.endurance))
+	action = ""
+	spend = ""
+	while action != "strength" or "endurance" or "no":
+		action = input("Spend Points on strength or endurance? ")
+		if "strength" in action:
+			while type(spend) != int:
+				try:
+					spend = int(input("How many points do you wish to spend? "))
+				except ValueError:
+					print("Please input a number. ")
+			if spend > attribute_points:
+				print("You don't have that many attribute points! ")
+			elif player.attribute_points <= spend:
+				player.strength += spend
+				break
+
+
+		elif "endurance" in action:
+			while type(spend) != int:
+				try:
+					spend = int(input("How many points do you wish to spend? "))
+				except ValueError:
+					print("Please input a number. ")
+			if spend > attribute_points:
+				print("You don't have that many attribute points! ")
+			elif player.attribute_points <= spend:
+				player.endurance += spend
+				break
+				
+		elif "no" in action:
+			print("Not spending any points and leaving the spend_attributes function ")
+			break
+
+
+
+
+
+# def equipment_change():
+# 	# print("Do you want to change your gear? ")
+# 	# action = input("words")
+# 	print("change gear function")
+
+def equip_an_item():
+	print("equip_an_item function ")
+
+def unequip_an_item():
+	print("unequip_an_item function ")
+
+
+
+
+def town():
+	print("You enter the town center. \nYou can use the follow commands: \nSHOP \nCHURCH \nWILDERNESS \nPLAYER ")
+	# print("You should no longer be in combat")
+	# player.details()
+	action = ""
+	while (action) != "shop" or "church" or "wilderness" or "player":
+		action = input("What is your action? ")
+
+		if "shop" in action:
+			shop()
+			break
+		elif "church" in action:
+			church()
+			break
+		elif "wilderness" in action:
+			wilderness()
+			break
+		elif "player" in action:
+			player.details()
+
+			# print(str(player.inventory))
+			print("You can use the following commands: \nEQUIP \nUNEQUIP \nCANCEL")
+			sub_action = input("Do you want change equipment?")
+			if "equip" in sub_action:
+				equip_an_item()
+				break
+			elif "unequip" in sub_action:
+				unequip_an_item()
+			elif "cancel" in sub_action:
+				break
+			else:
+				break
+			break
+		else:
+			print(" \nYou are in the town center and can use the following commands: \nSHOP \nCHURCH \nWILDERNESS \nPLAYER ")
+
+
+
+
+
+# Can do it by passing in arguments instead but need to keep track of them between transitions
+# (requires having other areas built)
+# first_visit = 1
+def town_first_visit():
+	print("first town visit, introduction ")
+	# print("now sending the player to the normal town. You can visit the Shop, the Church, the Wilderness, or check your supplies. ")
+	# Have the player test combat by getting in a fight with a drunk person, the player
+	# has no weapons yet so tey won't kill them.
+	# The townspeople congratulate the player
+	# introduce player to the church that heals them.
+	# introduce the player to the shop
+	# shop will tell them about the wilderness
+	# player leaves the shop and goes to the "main square"
+	# this is where the player takes control.
+	# They can examine their player details, that means, stats, inventory, 
+	# They can head to the church, shop, or wilderness.
+	town()
+
+def wilderness():
+	print("You are in the wilderness! \nWhat do you want to do? \n\nYou can head back to town or explore the wilderness!")
+	# make a loop asking for text input, that will run a function:
+	# explore the wilderness more (encounter)
+	# Go back to town (from there you'll have the same kind of setup but different functions, like shop)
+	# character details
+	# spend attribute points.
+	# item access, manage equipment
+	# 
+
+
+
+
 def bad_end():
 	print("You are dead. Game over. ")
 	print("this is in the function bad_end")
@@ -362,8 +475,8 @@ def players_turn(player, enemy, run_away):
 	print("================================= \n" + (player.name).capitalize() +
 		  "'s TURN: \nYou can do the following actions: \n\nATTACK \nRUN \nITEM\n ")
 	if run_away == 0:
-		if player.hitpoints <= 0:
-			# print("calling bad_end function fron players_turn 'if player.hitpoints <= 0")
+		if player.current_hitpoints <= 0:
+			# print("calling bad_end function fron players_turn 'if player.current_hitpoints <= 0")
 			bad_end()
 		elif enemy.hitpoints <= 0:
 			# print("the enemy hp is not greater than 0, they should be dead. this is printed inside players_turn")
@@ -386,6 +499,7 @@ def players_turn(player, enemy, run_away):
 						if enemy.hitpoints >= 1:
 							# clear(1)
 							print("================================= \n")
+							time.sleep(3)
 							enemy_turn(player, enemy, run_away)
 							break
 						# check if enemy is dead
@@ -397,7 +511,7 @@ def players_turn(player, enemy, run_away):
 							break
 					else:
 						clear(1)
-						print("The enemies armor is too high! ")
+						print("The " + str(enemy.name) + "'s armor is too high! ")
 						# clear(1)
 						print("================================= \n")
 						enemy_turn(player, enemy, run_away)
@@ -471,15 +585,15 @@ def players_turn(player, enemy, run_away):
 					print("Please type 'attack' 'run' or 'item' into the console. ")
 		else:
 			print("You successfully ran away! - players_turn function")
-			wilderness(player)
+			wilderness()
 
 
 
 def enemy_turn(player, enemy, run_away):
 	# If run away is not true, continue the fight
 	if run_away == 0:
-		if player.hitpoints <= 0:
-			# print("calling bad_end function fron enemy_turn 'if player.hitpoints <= 0")
+		if player.current_hitpoints <= 0:
+			# print("calling bad_end function fron enemy_turn 'if player.current_hitpoints <= 0")
 			bad_end()
 			# break
 		elif enemy.hitpoints >= 1:
@@ -487,12 +601,12 @@ def enemy_turn(player, enemy, run_away):
 			combat_damage = enemy.damage
 			combat_damage -= player.armor
 			if combat_damage > 0:
-				player.hitpoints -= combat_damage
+				player.current_hitpoints -= combat_damage
 				print("The " + str(enemy.name) + " hit you for " + str(combat_damage) + " damage after " + str(player.armor) +
 					  " was blocked by your armor!")
-				print("Player HP: " + str(player.hitpoints))
+				print("Player HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
 				# check if player is dead
-				if player.hitpoints <= 0:
+				if player.current_hitpoints <= 0:
 					# print("calling bad_end function fron enemy_turn, after player took dmg from enemy")
 					print("================================= \n")
 					bad_end()
@@ -568,7 +682,7 @@ def encounter(player):
 	# Combat is over! Back to the wilderness
 	print("The encouter is over! ")
 	# clear(50)
-	wilderness(player)
+	wilderness()
 
 
 
