@@ -124,7 +124,7 @@ def input_class(age, name, endurance, strength):
 def clear(amount):
 	i = 0
 	for i in range(amount):
-		time.sleep(0.07)
+		time.sleep(1)
 		print("\n")
 		i += 1
 	
@@ -184,6 +184,7 @@ def calc_stats(age, name, endurance, strength, char_class):
 				  ". \nExp to next Level: " + str(self.next_level_exp) + ". \nGold: " + str(self.gold) + 
 				  ". \nCurrent Weapon: " + str(self.current_weapon) + ". \nCurrnet Armor: " + 
 				  str(self.current_armor) + ". \nInventory: " + str(self.inventory))
+			clear(1)
 
 		def inventory_management(self):
 			print("huh")
@@ -215,10 +216,6 @@ def calc_stats(age, name, endurance, strength, char_class):
 	town_first_visit()
 	# return player
 
-
-
-
-# need to add a create armor and weapon function that can be dropped as loot. How to randommise the name?
 
 # Creating object group for armor
 class armor():
@@ -254,8 +251,8 @@ class armor():
 			player.inventory.append (self.name)
 
 # Creating object group for weapons
-class weapon():
-	"""docstring fos weapon"""
+class weapon_class():
+	"""docstring for weapon"""
 	def __init__(self, name, level_requirment, damage_bonus):
 		self.name = name
 		self.damage_bonus = damage_bonus
@@ -288,35 +285,79 @@ class weapon():
 			player.current_weapon = "None"
 			player.inventory.append (self.name)
 
+	def weapon_details(self):
+		print("Weapon details: " + "\nName: " + str(self.name) + ". \nLevel Required: " +
+			  str(self.level_requirment) + ". \nDamage: " + str(self.damage_bonus) + ". \n")
 
-testweapon = weapon("A good stick", 0, 10)
-super_test_weapon = weapon("Dragon Slayer", 10, 50)
+# need to add a create armor and weapon function that can be dropped as loot. How to randomize the name?
 
-testarmor = armor("Leather Armor", 0, 10)
-super_test_armor = armor("Shavs Wrap", 10, 50)
+# chance of a weapon was rolled after defeating an enemy already, if it succeeded, this is called
+def roll_weapon_reward():
+	roll = randint(0,100)
+	print(roll)
+	if roll <= 60:
+		weak_sword()
+	elif roll <= 90:
+		average_sword()
+	elif roll <= 99:
+		super_sword()
+	elif roll == 100:
+		best_sword()
+
+
+def weak_sword():
+	# weapon = 1
+	global weapon
+	weapon = weapon_class("Weak Sword", 1, randint(1,4))
+def average_sword():
+	global weapon
+	weapon = weapon_class("Average Sword", randint(1,4), randint(4, 10))
+	print(weapon)
+	# player.inventory.append (weapon)
+	player.inventory.append (weapon.name)
+
+	player.details()
+	weapon.weapon_details()
+	weapon.equip_item(player)
+	player.details()
+def super_sword():
+	global weapon
+	weapon = weapon_class("Super Sword", randint(10,15), randint(10,20))
+def best_sword():
+	global weapon
+	weapon = weapon_class("Best Sword", randint(20,30), randint(100,200))
+
+
+# testweapon = weapon("A good stick", 0, 10)
+# super_test_weapon = weapon("Dragon Slayer", 10, 50)
+
+# testarmor = armor("Leather Armor", 0, 10)
+# super_test_armor = armor("Shavs Wrap", 10, 50)
+
 
 
 
 class enemy_class():
-	def __init__(self, name, hitpoints, damage, armor, experience_reward):
+	def __init__(self, name, hitpoints, damage, armor, experience_reward, gold):
 		self.name = name
 		self.hitpoints = hitpoints
 		self.damage = damage
 		self.armor = armor
 		self.experience_reward = experience_reward
+		self.gold = gold
 
 def spawn_wolf():
 	global enemy
-	enemy = enemy_class("Wolf", randint(5,12), randint(1,3), randint(0,1), randint(10,30))
+	enemy = enemy_class("Wolf", randint(5,12), randint(1,3), randint(0,1), randint(10,30), randint(0,1))
 def spawn_bandit():
 	global enemy
-	enemy = enemy_class("Bandit", randint(10,20), randint(4,10), randint(0,3), randint(50,100))
+	enemy = enemy_class("Bandit", randint(10,20), randint(4,10), randint(0,3), randint(50,100), randint(0,20))
 def spawn_troll():
 	global enemy
-	enemy = enemy_class("Troll", randint(20,50), randint(5,15), randint(2,10), randint(500,1000))
+	enemy = enemy_class("Troll", randint(20,50), randint(5,15), randint(2,10), randint(500,1000), randint(20,50))
 def spawn_dragon():
 	global enemy
-	enemy = enemy_class("Dragon", randint(1000,2000), randint(50,100), randint(20,50), randint(10000,30000))
+	enemy = enemy_class("Dragon", randint(1000,2000), randint(50,100), randint(20,50), randint(10000,30000), randint(1000,3000))
 
 
 
@@ -337,26 +378,36 @@ def level_up_check(player):
 		# as long as they have an overflow of xp required for the next level.
 		# need to fix up the logic.
 		level_up_check(player)
+	else:
+		return
 		# player.current_experience = 0
 
 
 
 # BEFORE CALLING THIS FUNCTION CHECK IF THEY HAVE ATTRIBUTE POINTS > 0
 def spend_attributes():
-	print("\nUnspent points: " + str(player.attribute_points) + "\nStrength: " 
-		  + str(player.strength) + "\nEndurance: " + str(player.endurance))
+	player.attribute_points +=10
+	print("\nUnspent points: " + str(player.attribute_points) + "Current \nStrength: " 
+		  + str(player.strength) + "\nCurrent Endurance: " + str(player.endurance))
 	action = ""
 	spend = ""
-	while action != "strength" or "endurance" or "no":
-		action = input("Spend Points on strength or endurance? ")
+	clear(1)
+	print("Available Commands: \nSTRENGTH - increase strength \nENDURANCE - increase endurance \nCANCEL - go back ")
+
+	while action != "strength" or "endurance" or "cancel":
+		action = input(str(player.name) + ": ").lower()
+		# action = input("Spend Points on strength or endurance? ").lower()
 		if "strength" in action:
+
+			player.attribute_points 
 			while type(spend) != int:
 				try:
 					spend = int(input("How many points do you wish to spend? "))
 				except ValueError:
 					print("Please input a number. ")
-			if spend > attribute_points:
+			if spend > player.attribute_points:
 				print("You don't have that many attribute points! ")
+				break
 			elif player.attribute_points <= spend:
 				player.strength += spend
 				break
@@ -368,8 +419,9 @@ def spend_attributes():
 					spend = int(input("How many points do you wish to spend? "))
 				except ValueError:
 					print("Please input a number. ")
-			if spend > attribute_points:
+			if spend > player.attribute_points:
 				print("You don't have that many attribute points! ")
+				break
 			elif player.attribute_points <= spend:
 				player.endurance += spend
 				break
@@ -377,32 +429,63 @@ def spend_attributes():
 		elif "no" in action:
 			print("Not spending any points and leaving the spend_attributes function ")
 			break
+		else:
+			break
+		break
 
 
 
-
-
-# def equipment_change():
-# 	# print("Do you want to change your gear? ")
-# 	# action = input("words")
-# 	print("change gear function")
-
-def equip_an_item():
-	print("equip_an_item function ")
-
-def unequip_an_item():
-	print("unequip_an_item function ")
-
+# need to add while loop to for command input
+def church():
+	action = ""
+	heal_cost = player.level + 10
+	print("You entered the church and are greeted by a preist. ")
+	time.sleep(1)
+	print("Preist: 'Do you want to be healed?' ")
+	time.sleep(1)
+	print("Preist: 'It only costs " + str(heal_cost) + " gold for you.' ")
+	time.sleep(1)
+	print("Current gold: " + str(player.gold) + ". ")
+	while action != "yes" or "no":
+		action = input(str(player.name) + ": ").lower()
+		if "yes" in action:
+				if player.gold >= heal_cost:
+					player.gold -= heal_cost
+					clear(1)
+					print("Current HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
+					heal_amount = player.max_hitpoints - player.current_hitpoints
+					player.current_hitpoints += heal_amount
+					print("The priest is tending to your wounds... ")
+					clear(3)
+					print("You recovered " + str(heal_amount) + "HP. ")
+					print("\nCurrent HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
+					print("Current gold: " + str(player.gold))
+					clear(2)
+					town()
+				elif player.gold < heal_cost:
+					clear(1)
+					print("You don't have enough gold. But Please come back when you do.")
+					clear(2)
+					town()
+		elif "no" in action:
+			print("Preist: 'Maybe next time...' \nYou leave the church. \n")
+			clear(2)
+			town()
+		else:
+			print("Priest: 'Sorry, I'm hard of hearing. Did you say yes or no?")
 
 
 
 def town():
-	print("You enter the town center. \nYou can use the follow commands: \nSHOP \nCHURCH \nWILDERNESS \nPLAYER ")
-	# print("You should no longer be in combat")
-	# player.details()
 	action = ""
+	print("You enter the town center. ")
+	clear(1)
+	print("Available Commands: \nSHOP - buy and sell items. \nCHURCH - recover hitpoints " +
+		  "\nWILDERNESS - fight enemies \nPLAYER - inventory, equipment management, skill points ")
+	clear(1)
 	while (action) != "shop" or "church" or "wilderness" or "player":
-		action = input("What is your action? ")
+		action = input(str(player.name).capitalize() + ": ").lower()
+		clear(1)
 
 		if "shop" in action:
 			shop()
@@ -417,8 +500,9 @@ def town():
 			player.details()
 
 			# print(str(player.inventory))
-			print("You can use the following commands: \nEQUIP \nUNEQUIP \nCANCEL")
-			sub_action = input("Do you want change equipment?")
+			print("Available Commands: \nEQUIP \nUNEQUIP \nCANCEL \n")
+			sub_action = input(str(player.name) + ": ").lower()
+			clear(1)
 			if "equip" in sub_action:
 				equip_an_item()
 				break
@@ -430,9 +514,12 @@ def town():
 				break
 			break
 		else:
-			print(" \nYou are in the town center and can use the following commands: \nSHOP \nCHURCH \nWILDERNESS \nPLAYER ")
+			print(" \nYou are in the town center. \nAvailable Commands: \nSHOP \nCHURCH \nWILDERNESS \nPLAYER ")
 
 
+# subset of commands that allows the play to swap out their equipment and spend skillpoints. and eventually use items
+def player_command():
+	print("placeholder ")
 
 
 
@@ -455,7 +542,34 @@ def town_first_visit():
 	town()
 
 def wilderness():
-	print("You are in the wilderness! \nWhat do you want to do? \n\nYou can head back to town or explore the wilderness!")
+	action = ""
+	print("You are in the wilderness! ")
+	print("You can use the following commands: \n\nEXPLORE - fight enemies \nTOWN - leave wilderness " + 
+		  "\nPLAYER - inventory, equipment management, skill points ")
+	
+	while action != "explore" or "town" or "player":
+		action = input(str(player.name).capitalize() + ": ").lower()
+		if "explore" in action:
+			print("You wander around the wilderness... ")
+			clear(4)
+			encounter(player)
+			break
+		elif "town" in action:
+			print("Travelling back to town... ")
+			clear(4)
+			town()
+			break
+		elif "player" in action:
+			player_command()
+			break
+		else:
+			print("Invalid Command ")
+			clear(1)
+
+
+
+	encounter(player)
+	# print("\nWhat do you want to do? \n\nYou can head back to town or explore the wilderness!")
 	# make a loop asking for text input, that will run a function:
 	# explore the wilderness more (encounter)
 	# Go back to town (from there you'll have the same kind of setup but different functions, like shop)
@@ -473,7 +587,7 @@ def bad_end():
 
 def players_turn(player, enemy, run_away):
 	print("================================= \n" + (player.name).capitalize() +
-		  "'s TURN: \nYou can do the following actions: \n\nATTACK \nRUN \nITEM\n ")
+		  "'s TURN: \nYou can use the following commands: \nATTACK \nRUN \nITEM\n ")
 	if run_away == 0:
 		if player.current_hitpoints <= 0:
 			# print("calling bad_end function fron players_turn 'if player.current_hitpoints <= 0")
@@ -482,12 +596,13 @@ def players_turn(player, enemy, run_away):
 			# print("the enemy hp is not greater than 0, they should be dead. this is printed inside players_turn")
 			print("You defeated the " + str(enemy.name) + "! ")
 			player.current_experience += enemy.experience_reward
+			player.gold += enemy.gold
 			level_up_check(player)
 		elif enemy.hitpoints >= 1:
 			# print("the enemy hp is greater than 1, so move onto player turn input 'action'")
 			action = ""
 			while action != "attack" or "run" or "item":
-				action = input("What is your action? ").lower()
+				action = input(str(player.name).capitalize() + ": ").lower()
 				if "attack" in (action):
 					combat_damage = player.damage
 					combat_damage -= enemy.armor
@@ -605,6 +720,7 @@ def enemy_turn(player, enemy, run_away):
 				print("The " + str(enemy.name) + " hit you for " + str(combat_damage) + " damage after " + str(player.armor) +
 					  " was blocked by your armor!")
 				print("Player HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
+				# clear(2)
 				# check if player is dead
 				if player.current_hitpoints <= 0:
 					# print("calling bad_end function fron enemy_turn, after player took dmg from enemy")
@@ -692,11 +808,3 @@ def encounter(player):
 # if player.gold >= item__shop_price:
 	# player.gold -= item__shop_price:
 	# player.inventory.append (self.name)
-
-
-# 1. Town/base of operations - buy+sell shop, healing(costs money) - also allows to go to exploring(combat).
-#  - also functional level ups
-#  - In the town, be able to call functional commands, can view character sheet,
-# 3. Combat.
-# 5. Shop.
-# level up funcationality, attribute point spending.
