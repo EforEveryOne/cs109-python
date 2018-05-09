@@ -204,46 +204,63 @@ while active_game == 1:
 		while action != "strength" or "endurance" or "cancel":
 			action = input(str(player.name) + ": ").lower()
 			if "strength" in action:
-				while type(spend) != int:
-					spend = int(input("How many points do you wish to spend? "))
-					if spend > player.attribute_points:
-						print("You don't have that many attribute points! ")
-						break
-					elif spend <= player.attribute_points:
-						player.strength += spend
-						player.attribute_points -= spend
-						print("\nUnspent points: " + str(player.attribute_points) + ". \nCurrent: Strength: "
-						+ str(player.strength) + ". ")
-						player.damage = player.strength / 2 + player.level
-						# will need to check for weapon bonus damage and such eventually.
-						player.damage = int(player.damage)
-						if "from wilderness" in from_location:
-							wilderness()
+				while type(spend) != int or type(spend) != float:
+					try:
+						spend = int(input("How many points do you wish to spend? "))
+						spend = int(spend)
+						if spend > player.attribute_points:
+							print("You don't have that many attribute points! ")
+							spend_attributes(from_location)
 							break
-						elif "from town" in from_location:
-							town()
-						break
-					else:
-						print("Invalid input. ")
+						elif spend <= player.attribute_points:
+							player.strength += spend
+							player.attribute_points -= spend
+							print("\nUnspent points: " + str(player.attribute_points) + ". \nCurrent: Strength: "
+							+ str(player.strength) + ". ")
+							player.damage = player.strength / 2 + player.level
+							# will need to check for weapon bonus damage and such eventually.
+							player.damage = int(player.damage)
+							if "from wilderness" in from_location:
+								wilderness()
+								break
+							elif "from town" in from_location:
+								town()
+								break
+							# break
+							else:
+								print("Invalid input. in spend attribute_points func - strength ")
+						else:
+							print("Invalid input. in spend attribute_points func - enduance  ")
+					except ValueError:
+						print("You must input a number. -strength")
 			elif "endurance" in action:
 				while type(spend) != int:
-					spend = int(input("How many points do you wish to spend? "))
-					if spend > player.attribute_points:
-						print("You don't have that many attribute points! ")
-						spend_attributes(from_location)
-					elif spend <= player.attribute_points:
-						player.endurance += spend
-						player.attribute_points -= spend
-						print("\nUnspent points: " + str(player.attribute_points) + ". \nCurrent: Endurance: "
-						+ str(player.endurance) + ". ")
-						player.max_hitpoints = player.endurance * 2 + player.level
-						if "from wilderness" in from_location:
-							wilderness()
-						elif "from town" in from_location:
-							town()
-						break
-					else:
-						print("Invalid input. ")
+					try:
+						spend = int(input("How many points do you wish to spend? "))
+						spend = int(spend)
+						if spend > player.attribute_points:
+							print("You don't have that many attribute points! ")
+							spend_attributes(from_location)
+							break
+						elif spend <= player.attribute_points:
+							player.endurance += spend
+							player.attribute_points -= spend
+							print("\nUnspent points: " + str(player.attribute_points) + ". \nCurrent: Endurance: "
+							+ str(player.endurance) + ". ")
+							player.max_hitpoints = player.endurance * 2 + player.level
+							if "from wilderness" in from_location:
+								wilderness()
+								break
+							elif "from town" in from_location:
+								town()
+								break
+							# break
+							else:
+								print("Invalid input. in spend attribute_points func - strength ")
+						else:
+							print("Invalid input. in spend attribute_points func - enduance  ")
+					except ValueError:
+						print("You must input a number. -enduance")
 			elif "cancel" in action:
 				print("Not spending any points and going back. ")
 				if "from wilderness" in from_location:
@@ -254,121 +271,136 @@ while active_game == 1:
 					break
 			else:
 				print("Invalid input. - in spend attribute_points function ")
-				action = ""
-				spend = ""
+		# else:
+			# pass
 
 	def church():
 		"""The Church function is the only mechanic implemented where the player can recover lost hitpoints
 		   but they have to pay gold."""
-		action = ""
-		heal_cost = player.level + 10
-		print("=================================")
-		print("You entered the church and are greeted by a priest. ")
-		time.sleep(1)
-		print("Priest: 'Do you want to be healed?' ")
-		time.sleep(1)
-		print("Priest: 'It only costs " + str(heal_cost) + " gold for you.' ")
-		time.sleep(1)
-		print("Current gold: " + str(player.gold) + ". ")
-		while action != "yes" or "no":
-			action = input(str(player.name) + ": ").lower()
-			clear(1)
-			if "yes" in action:
-					if player.gold >= heal_cost:
-						player.gold -= heal_cost
-						clear(1)
-						print("Current HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
-						heal_amount = player.max_hitpoints - player.current_hitpoints
-						player.current_hitpoints += heal_amount
-						print("The priest is tending to your wounds... ")
-						clear(3)
-						print("You recovered " + str(heal_amount) + "HP. ")
-						print("\nCurrent HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
-						print("Current gold: " + str(player.gold))
-						print("=================================")
-						clear(2)
-						town()
-					elif player.gold < heal_cost:
-						clear(1)
-						print("You don't have enough gold. But Please come back when you do. ")
-						print("You leave the church. ")
-						print("=================================")
-						clear(2)
-						town()
-			elif "no" in action:
-				print("Priest: 'Maybe next time...' \nYou leave the church. ")
-				print("=================================")
-				clear(2)
-				town()
-			else:
-				print("Priest: 'Sorry, I'm hard of hearing. Did you say yes or no? ")
+		if player.current_hitpoints <= 0:
+			bad_end()
+		else:
+			action = ""
+			heal_cost = player.level + 10
+			print("=================================")
+			print("You entered the church and are greeted by a priest. ")
+			time.sleep(1)
+			print("Priest: 'Do you want to be healed?' ")
+			time.sleep(1)
+			print("Priest: 'It only costs " + str(heal_cost) + " gold for you.' ")
+			time.sleep(1)
+			print("Current gold: " + str(player.gold) + ". ")
+			while action != "yes" or "no":
+				action = input(str(player.name) + ": ").lower()
+				clear(1)
+				if "yes" in action:
+						if player.gold >= heal_cost:
+							player.gold -= heal_cost
+							clear(1)
+							print("Current HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
+							heal_amount = player.max_hitpoints - player.current_hitpoints
+							player.current_hitpoints += heal_amount
+							print("The priest is tending to your wounds... ")
+							clear(3)
+							print("You recovered " + str(heal_amount) + "HP. ")
+							print("\nCurrent HP: " + str(player.current_hitpoints) + "/" + str(player.max_hitpoints))
+							print("Current gold: " + str(player.gold))
+							print("=================================")
+							clear(2)
+							town()
+							break
+						elif player.gold < heal_cost:
+							clear(1)
+							print("You don't have enough gold. But Please come back when you do. ")
+							print("You leave the church. ")
+							print("=================================")
+							clear(2)
+							town()
+							break
+				elif "no" in action:
+					print("Priest: 'Maybe next time...' \nYou leave the church. ")
+					print("=================================")
+					clear(2)
+					town()
+					break
+				else:
+					print("Priest: 'Sorry, I'm hard of hearing. Did you say yes or no? ")
 
 	def town():
 		"""The Town function is the main hub of operations. This is where the player can find the
 		   church and eventually manage their inventory and sell items."""
-		action = ""
-		print("=================================")
-		print("You enter the town center. ")
-		clear(1)
-		print("Available Commands: \nSHOP - buy and sell items. \nCHURCH - recover hitpoints " +
-			  "\nWILDERNESS - fight enemies \nPLAYER - inventory, equipment management, skill points ")
-		while (action) != "shop" or "church" or "wilderness" or "player":
-			action = input(str(player.name).capitalize() + ": ").lower()
-			if "shop" in action:
-				print("Travelling to the shop... ")
-				print("=================================")
-				clear(2)
-				shop()
-				break
-			elif "church" in action:
-				print("Travelling to the church... ")
-				print("=================================")
-				clear(2)
-				church()
-				break
-			elif "wilderness" in action:
-				print("Travelling to the wilderness... ")
-				print("=================================")
-				clear(4)
-				wilderness()
-				break
-			elif "player" in action:
-				player.details()
-				# print(str(player.inventory))
-				print("Available Commands: \nEQUIP - doesn't work yet. \nUNEQUIP - doesn't work yet." +
-					  " \nATTRIBUTE - spend points to increase stats. \nCANCEL - go back \n")
-				while player != "equip" or "unequip" or "attribute" or "cancel":
-					sub_action = input(str(player.name) + ": ").lower()
-					clear(1)
-					if "equip" in sub_action:
-						player.details()
-						# equip_an_item()
-						print("this doesn't work yet")
-						print("=================================")
-						town()
-						break
-					elif "unequip" in sub_action:
-						player.details()
-						# unequip_an_item()
-						print("this doesn't work yet")
-						print("=================================")
-						town()
-						break
-					elif "attribute" in sub_action:
-						print("=================================")
-						from_location = "from town"
-						print("going to attrbute spend scene from town")
-						print("from_location is set to: " + str(from_location))
-						spend_attributes(from_location)
-						break
-					elif "cancel" in sub_action:
-						print("Canceled. \n=================================")
-						town()
-						break
+		if player.current_hitpoints <= 0:
+			bad_end()
+		else:
+			action = ""
+			print("=================================")
+			print("You enter the town center. ")
+			clear(1)
+			print("Available Commands: \nSHOP - buy and sell items. \nCHURCH - recover hitpoints " +
+				  "\nWILDERNESS - fight enemies \nPLAYER - inventory, equipment management, skill points ")
+			while (action) != "shop" or "church" or "wilderness" or "player":
+				action = input(str(player.name).capitalize() + ": ").lower()
+				if "shop" in action:
+					print("Travelling to the shop... ")
+					print("=================================")
+					clear(2)
+					shop()
+					break
+				elif "church" in action:
+					print("Travelling to the church... ")
+					print("=================================")
+					clear(2)
+					church()
+					break
+				elif "wilderness" in action:
+					print("Travelling to the wilderness... ")
+					print("=================================")
+					clear(4)
+					wilderness()
+					break
+				elif "player" in action:
+					player.details()
+					# print(str(player.inventory))
+					print("Available Commands: \nEQUIP - doesn't work yet. \nUNEQUIP - doesn't work yet." +
+						  " \nATTRIBUTE - spend points to increase stats. \nCANCEL - go back \n")
+					while player != "equip" or "unequip" or "attribute" or "cancel":
+						sub_action = input(str(player.name) + ": ").lower()
+						clear(1)
+						if "equip" in sub_action:
+							player.details()
+							# equip_an_item()
+							print("this doesn't work yet")
+							print("=================================")
+							town()
+							break
+						elif "unequip" in sub_action:
+							player.details()
+							# unequip_an_item()
+							print("this doesn't work yet")
+							print("=================================")
+							town()
+							break
+						elif "attribute" in sub_action:
+							print("=================================")
+							from_location = "from town"
+							print("going to attrbute spend scene from town")
+							print("from_location is set to: " + str(from_location))
+							spend_attributes(from_location)
+							break
+						elif "cancel" in sub_action:
+							print("Canceled. \n=================================")
+							town()
+							break
+						else:
+							if player.current_hitpoints <= 0:
+								bad_end()
+							else:
+								print("Invalid command. ---- inside town function sub command - player")
+				else:
+					if player.current_hitpoints <= 0:
+						bad_end()
 					else:
-						print("Invalid command. ")
-			else:
-				print("Invalid command. ")
+						print("Invalid command. ---- inside town function main command ")
 
 	#  Eventually a set of commands that allows the player to swap out equipment, spend skillpoints, and use items.
 	# def player_command():
@@ -395,65 +427,71 @@ while active_game == 1:
 
 	def wilderness():
 		"""The wilderness is where the player is able to get into fights and earn rewards."""
-		action = ""
-		print("=================================")
-		print("You are in the wilderness! ")
-		print("You can use the following commands: \n\nEXPLORE - fight enemies \nTOWN - leave wilderness " +
-			  "\nPLAYER - inventory, equipment management, skill points ")
-		while action != "explore" or "town" or "player":
-			action = input(str(player.name).capitalize() + ": ").lower()
-			clear(1)
-			if "explore" in action:
-				print("You wander around the wilderness... ")
-				print("=================================")
-				clear(4)
-				encounter(player)
-				break
-			elif "town" in action:
-				print("Travelling back to town... ")
-				print("=================================")
-				clear(4)
-				town()
-				break
-			elif "player" in action:
-				player.details()
-				# print(str(player.inventory))
-				print("Available Commands: \nEQUIP - doesn't work yet. \nUNEQUIP - doesn't work yet." +
-					  " \nATTRIBUTE - spend points to increase stats. \nCANCEL - go back \n")
-				while player != "equip" or "unequip" or "attribute" or "cancel":
-					sub_action = input(str(player.name) + ": ").lower()
-					clear(1)
-					if "equip" in sub_action:
-						player.details()
-						# equip_an_item()
-						print("this doesn't work yet")
-						print("=================================")
+		if player.current_hitpoints <= 0:
+			bad_end()
+		else:
+			action = ""
+			print("=================================")
+			print("You are in the wilderness! ")
+			print("You can use the following commands: \n\nEXPLORE - fight enemies \nTOWN - leave wilderness " +
+				  "\nPLAYER - inventory, equipment management, skill points ")
+			while action != "explore" or "town" or "player":
+				action = input(str(player.name).capitalize() + ": ").lower()
+				clear(1)
+				if "explore" in action:
+					print("You wander around the wilderness... ")
+					print("=================================")
+					clear(4)
+					encounter(player)
+					break
+				elif "town" in action:
+					print("Travelling back to town... ")
+					print("=================================")
+					clear(4)
+					town()
+					break
+				elif "player" in action:
+					player.details()
+					# print(str(player.inventory))
+					print("Available Commands: \nEQUIP - doesn't work yet. \nUNEQUIP - doesn't work yet." +
+						  " \nATTRIBUTE - spend points to increase stats. \nCANCEL - go back \n")
+					while player != "equip" or "unequip" or "attribute" or "cancel":
+						sub_action = input(str(player.name) + ": ").lower()
 						clear(1)
-						wilderness()
-						break
-					elif "unequip" in sub_action:
-						player.details()
-						# unequip_an_item()
-						print("this doesn't work yet")
-						print("=================================")
-						clear(1)
-						wilderness()
-						break
-					elif "attribute" in sub_action:
-						print("=================================")
-						from_location = "from wilderness"
-						print("going to attribute spend scene from wilderness")
-						print("from_location is set to: " + str(from_location))
-						spend_attributes(from_location)
-					elif "cancel" in sub_action:
-						print("Canceled. \n=================================")
-						clear(1)
-						wilderness()
-						break
-					else:
-						print("Invalid command. ")
-			else:
-				print("Invalid Command. ")
+						if "equip" in sub_action:
+							player.details()
+							# equip_an_item()
+							print("this doesn't work yet")
+							print("=================================")
+							clear(1)
+							wilderness()
+							break
+						elif "unequip" in sub_action:
+							player.details()
+							# unequip_an_item()
+							print("this doesn't work yet")
+							print("=================================")
+							clear(1)
+							wilderness()
+							break
+						elif "attribute" in sub_action:
+							print("=================================")
+							from_location = "from wilderness"
+							print("going to attribute spend scene from wilderness")
+							print("from_location is set to: " + str(from_location))
+							spend_attributes(from_location)
+							break
+						elif "cancel" in sub_action:
+							print("Canceled. \n=================================")
+							clear(1)
+							wilderness()
+							break
+						else:
+							print("Available Commands: \nEQUIP - doesn't work yet. \nUNEQUIP - doesn't work yet." +
+						          " \nATTRIBUTE - spend points to increase stats. \nCANCEL - go back ---- inside wilderness function, sub command -player\n")
+				else:
+					print("You can use the following commands: \n\nEXPLORE - fight enemies \nTOWN - leave wilderness " +
+				  "\nPLAYER - inventory, equipment management, skill points ---- inside wilderness function")
 
 	# Can simplify this be breaking down into functions...
 	def players_turn(player, enemy, run_away):
@@ -503,6 +541,8 @@ while active_game == 1:
 									print("You now have a total of: " + str(player.current_experience) + " experience! ")
 									level_up_check(player)
 									break
+							else:
+								break
 						else:
 							clear(1)
 							print("The " + str(enemy.name) + "'s armor is too high! ")
@@ -568,8 +608,8 @@ while active_game == 1:
 					# 	break
 					else:
 						print("Please type 'attack' 'run' or 'item' into the console. ")
-			else:
-				wilderness()
+			# else:
+				# wilderness()
 
 	def enemy_turn(player, enemy, run_away):
 		# If run away is not true, continue the fight
@@ -626,11 +666,11 @@ while active_game == 1:
 		# Create a randomized enemy.
 		create_random_enemy()
 		print("\nA " + str(enemy.name) + " has appeared! \n")
-		time.sleep(1)
+		time.sleep(0.5)
 		# Decide who goes first influenced by player age.
 		turn_order = randint(1, 100)
 		print("Deciding turn order...")
-		time.sleep(2)
+		time.sleep(0.5)
 		print("You rolled: " + str(turn_order) + " out of 100. ")
 		clear(1)
 		if player.age <= 16:
@@ -656,11 +696,11 @@ while active_game == 1:
 		# Check who goes first.
 		if player_first == 0:
 			print("The " + str(enemy.name) + " takes action before you can react! \n")
-			time.sleep(1)
+			time.sleep(0.5)
 			enemy_turn(player, enemy, run_away)
 		elif player_first == 1:
 			print("You're able to act before the " + str(enemy.name) + " realizes! \n")
-			time.sleep(1)
+			time.sleep(0.5)
 			players_turn(player, enemy, run_away)
 		print("The encounter is over! ")
 		print("=================================")
@@ -754,40 +794,41 @@ while active_game == 1:
 								  gold, inventory, is_weapon_slot_filled, is_armor_slot_filled, current_weapon,
 								  current_armor)
 		player.details()
-		time.sleep(5)
+		# time.sleep(5)
 		print("\nI wish you well on your adventure, " + (player.name).capitalize() + "!")
-		clear(2)
+		# clear(2)
 		print(" \n\nYour eyes are getting heavy...")
-		clear(2)
+		# clear(2)
 		print("Your vision is blurry...")
-		clear(2)
+		# clear(2)
 		print("The wolrd fades away...")
-		clear(4)
+		# clear(4)
 		print("You wake up on a dusty road.")
 		town_first_visit()
+		
 
 	def input_class(age, name, endurance, strength):
 		"""Takes in previous inputs and continues to gather more info about the player to build the character."""
 		char_class = ""
-		clear(1)
+		# clear(1)
 		print("Tell me...")
-		clear(1)
+		# clear(1)
 		while (char_class) != "defensive" or "aggressive":
 			char_class = input("Do you consider yourself more of a Defensive or an Aggressive person? ").lower()
 			if "defensive" in (char_class):
 				char_class = "Tank"
 				endurance += 5
-				clear(1)
+				# clear(1)
 				print("Congratulations. Your character is complete. \nYou are ready for adventure! \n\n")
-				clear(1)
+				# clear(1)
 				calc_stats(age, name, endurance, strength, char_class)
 				break
 			elif "aggressive" in (char_class):
 				char_class = "Fighter"
 				strength += 5
-				clear(1)
+				# clear(1)
 				print("Congratulations. Your character is complete. \nYou are ready for adventure! \n\n")
-				clear(1)
+				# clear(1)
 				calc_stats(age, name, endurance, strength, char_class)
 				break
 			else:
@@ -860,18 +901,18 @@ while active_game == 1:
 			start = input("Do you want to go on an adventure? ").lower()
 			if "yes" in (start):
 				print("You are about to embark on your very own adventure! ")
-				clear(1)
+				# clear(1)
 				print("But first lets get a good look at ya. ")
-				clear(1)
+				# clear(1)
 				print("CHARACTER CREATION: ")
 				name = input("So you're an adventurer, eh? What is your name? ")
-				clear(1)
+				# clear(1)
 				print("Hmm...")
-				clear(1)
+				# clear(1)
 				print(str(name).capitalize() + "? ")
-				clear(1)
+				# clear(1)
 				print("That's a funny sounding name.")
-				clear(1)
+				# clear(1)
 				while type(age) != int or type(age) != float:
 					try:
 						age = int(input("How old are you? "))
